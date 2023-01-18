@@ -1,0 +1,191 @@
+{
+  "users": [
+    {
+      "id": "957bd84e-e58b-11eb-ba80-0242ac130004",
+      "userName": "maticpogi",
+      "password": "abcdE123",
+      "firstName": "",
+      "lastName": "",
+      "role": "Admin",
+      "status": "Approved"
+    },
+    {
+      "id": "b1ff03b2-1506-479c-bdb9-5cd4d523a916",
+      "userName": "kyla",
+      "password": "abcdE123",
+      "firstName": "",
+      "lastName": "",
+      "role": "Admin",
+      "status": "Approved"
+    },
+    {
+      "id": "88ba4158-abbd-44cf-9e0a-d5963ffa8b21",
+      "userName": "r",
+      "password": "r",
+      "firstName": "",
+      "lastName": "",
+      "role": "Admin",
+      "status": "Approved"
+    },
+    {
+      "firstName": "test firstname",
+      "lastName": "test lastname",
+      "userName": "testmatic",
+      "password": "abcdE123",
+      "confirmPassword": "abcdE123",
+      "role": "Cashier",
+      "status": "Pending",
+      "id": "oz_iYxi"
+    },
+    {
+      "firstName": "roy",
+      "lastName": "sabenecio",
+      "userName": "rs",
+      "password": "pass",
+      "confirmPassword": "pass",
+      "role": "Cashier",
+      "status": "Pending",
+      "id": "GoA04s5"
+    }
+  ],
+  "sales": [
+    {
+      "id": "88ba4158-abbd-44cf-9e0a-d5963ffa8b33",
+      "dateSold": "Mon Oct 10 2022 22:04:50 GMT+0800",
+      "totalAmount": 1.6,
+      "userId": "88ba4158-abbd-44cf-9e0a-d5963ffa8b21"
+    }
+  ],
+  "purchaseRecord": [
+    {
+      "item": "Test",
+      "category": "Wing Flavor",
+      "quantity": "25",
+      "supplier": "JD FOODS Premium Sauces",
+      "price": "1500",
+      "datePurchased": "11/9/2022, 8:24:37 PM",
+      "id": "cbC5Z4H"
+    },
+    {
+      "item": "Gyoza",
+      "category": "Snacks",
+      "quantity": "30",
+      "supplier": "Fuji Mart Incorporated",
+      "price": "2500",
+      "datePurchased": "11/9/2022, 9:26:06 PM",
+      "id": "gve5J9A"
+    },
+    {
+      "item": "Hotdog",
+      "category": "Snacks",
+      "quantity": "50",
+      "supplier": "Fuji Mart Incorporated",
+      "price": "4500",
+      "datePurchased": "11/9/2022, 9:30:20 PM",
+      "id": "aONh2xu"
+    }
+  ],
+  "recipe": [
+    {
+      "id": "88ba4158-abbd-44cf-9e0a-d5963ffa8b77",
+      "name": "Sample Recipe Name",
+      "size": 1,
+      "requiredMeasure": 2,
+      "menuStatus": 3,
+      "ingredients": [
+        "sample 1 ingredient",
+        "sample 2 ingredient"
+      ],
+      "materials": [
+        "sample 1 material",
+        "sample 2 material"
+      ]
+    }
+  ],
+  "ingredients": [
+    {
+      "name": "Okinawa",
+      "category": "Milktea Flavor",
+      "quantity": "355",
+      "status": "Low",
+      "datePurchased": "10/26/2022, 12:31:01 PM",
+      "id": "P3hrHW1"
+    },
+    {
+      "name": "Cookies and Cream",
+      "category": "Milktea Flavor",
+      "quantity": "200",
+      "status": "Low",
+      "datePurchased": "10/26/2022, 1:05:30 PM",
+      "id": "2kwseOv"
+    },
+    {
+      "name": "Pearl",
+      "category": "Add on",
+      "quantity": "100",
+      "status": "Low",
+      "datePurchased": "10/26/2022, 1:06:38 PM",
+      "id": "xh7X4Mx"
+    },
+    {
+      "name": "Cookies and Cream",
+      "category": "Milktea Flavor",
+      "quantity": "780",
+      "status": "Low",
+      "datePurchased": "10/26/2022, 1:06:38 PM",
+      "id": "FL3Pehu"
+    },
+    {
+      "name": "Matcha",
+      "category": "Flavor Powder",
+      "quantity": "34",
+      "status": "Low",
+      "datePurchased": "10/26/2022, 1:06:38 PM",
+      "id": "RSA4SFN"
+    },
+    {
+      "name": "16oz Cups",
+      "category": "Materials",
+      "quantity": "200",
+      "status": "Low",
+      "datePurchased": "10/26/2022, 1:06:38 PM",
+      "id": "lD3IKcE"
+    },
+    {
+      "name": "Wintermelon",
+      "category": "Flavor Powder",
+      "quantity": "500",
+      "status": "Low",
+      "datePurchased": "10/26/2022, 1:06:38 PM",
+      "id": "Y7Ft0T-"
+    },
+    {
+      "name": "Taro",
+      "category": "Milktea Flavor",
+      "quantity": "750",
+      "status": "Low",
+      "datePurchased": "10/26/2022, 1:15:58 PM",
+      "id": "SkSSUck"
+    }
+  ],
+  "suppliers": [
+    {
+      "id": "1",
+      "name": "PHNI Bubble Tea Store",
+      "address": "208A Banawe St., Brgy Tatalon, Quezon City",
+      "contactNumber": "09175858100",
+      "contactPerson": "Lyn",
+      "itemCarried": "Milktea Flavors",
+      "dateAdded": "11/9/2022, 1:59:59 PM"
+    },
+    {
+      "id": "2",
+      "name": "In joy",
+      "address": "157 Josefa Drive Brgy, Corazon De Jesus, San Juan City",
+      "contactNumber": "0917-807-7279",
+      "contactPerson": "Mark",
+      "itemCarried": "Milktea Flavors",
+      "dateAdded": "11/9/2022, 1:59:59 PM"
+    }
+  ]
+}
