@@ -1,3 +1,4 @@
+import React from 'react';
 import { Grid, Typography, Box, Card, Grow, Stack } from '@mui/material';
 import LineGraph from '../line-graph';
 import { default as styles } from './styles'
@@ -173,7 +174,7 @@ const Dashboard = ({
 
 			<Grid item md={12} xs={12} width={'100%'} >
 				<Card>
-					<LineGraph data={salesByYear()} height={"75%"} />
+					{/* <LineGraph data={salesByYear()} height={"75%"} /> */}
 				</Card>
 			</Grid>
 

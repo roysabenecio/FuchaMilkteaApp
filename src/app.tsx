@@ -1,5 +1,5 @@
 import AppRoutes from './routes';
-import { hot } from 'react-hot-loader';
+// import { hot } from 'react-hot-loader';
 import MainContainer from './features/main/main';
 import React from 'react';
 

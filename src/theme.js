@@ -7,6 +7,7 @@ const theme = createTheme({
       'Poppins',
       'sans-serif',
     ].join(','),
+    // fontFamily: 'Poppins, sans-serif',
 
   },
   mixins: {
@@ -26,6 +27,13 @@ const theme = createTheme({
 
 export default createTheme(theme, {
   components: {
+    // MuiCssBaseline:{
+    //   stylesOverrides: `
+    //   @font-face {
+    //     font
+    //   }
+    //   `
+    // },
     MuiAppBar: {
       styleOverrides: {
         root: {

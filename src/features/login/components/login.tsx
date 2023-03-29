@@ -9,7 +9,8 @@ import { loginUserApi } from '../slice';
 const Login = ({ dispatch }) => {
   const { handleSubmit, control } = useForm();
   const onLogin = async (data) => {
-    dispatch(loginUserApi()); // fix
+
+    dispatch(loginUserApi(data)); // fix
   };
 
   return (

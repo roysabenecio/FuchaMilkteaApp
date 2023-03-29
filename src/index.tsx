@@ -9,6 +9,8 @@ import CssBaseline from '@mui/material/CssBaseline';
 import App from './app';
 import theme from './theme';
 
+import "@fontsource/poppins";
+
 ReactDOM.render(
   <SnackbarProvider
     maxSnack={3}

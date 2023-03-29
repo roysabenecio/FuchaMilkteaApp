@@ -23,7 +23,7 @@ const routes = () => {
         
         <Routes>
             <Route element={<ProtectedRoutes />}>
-                <Route path="/dashboard" element={<Dashboard />} exact />
+                <Route path="/dashboard" element={<Dashboard />} />
                 <Route path="/sales-report" element={<SalesReport />} />
                 <Route path="/inventory-report" element={<InventoryReport />} />
                 <Route path="/inventory" element={<Inventory />} />
