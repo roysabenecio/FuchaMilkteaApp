@@ -9,7 +9,7 @@ import { loginUserApi } from '../slice';
 const Login = ({ dispatch }) => {
   const { handleSubmit, control } = useForm();
   const onLogin = async (data) => {
-    dispatch(loginUserApi(data));
+    dispatch(loginUserApi()); // fix
   };
 
   return (
@@ -62,7 +62,7 @@ const Login = ({ dispatch }) => {
             />
             <Button
               css={loginCss.button}
-              variant="loginBtn"
+              // variant="loginBtn" //fix
               disableElevation
               size="large"
               type='submit'

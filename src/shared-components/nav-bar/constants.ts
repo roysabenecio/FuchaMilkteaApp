@@ -24,43 +24,43 @@ export const userNavItems = {
     'Admin': [
         {
             id: 0,
-            icon: <DashboardRoundedIcon />,
+            // icon: <DashboardRoundedIcon />,
             label: 'Dashboard',
             route: 'dashboard'
         },
         {
             id: 1,
-            icon: <WarehouseRoundedIcon />,
+            // icon: <WarehouseRoundedIcon />,
             label: 'Inventory',
             route: 'inventory'
         },
         {
             id: 2,
-            icon: <PeopleRoundedIcon />,
+            // icon: <PeopleRoundedIcon />,
             label: 'Users',
             route: 'users'
         },
         {
             id: 3,
-            icon: <LocalShippingRoundedIcon />,
+            // icon: <LocalShippingRoundedIcon />,
             label: 'Suppliers',
             route: 'suppliers'
         },
         {
             id: 4,
-            icon: <InventoryRoundedIcon />,
+            // icon: <InventoryRoundedIcon />,
             label: 'Reports',
 
         },
         {
             id: 5,
-            icon: <WatchLaterRoundedIcon />,
+            // icon: <WatchLaterRoundedIcon />,
             label: 'History',
             route: 'history'
         },
         {
             id: 6,
-            icon: <PointOfSaleRoundedIcon />,
+            // icon: <PointOfSaleRoundedIcon />,
             label: 'POS',
             route: 'pos'
         }
@@ -68,19 +68,19 @@ export const userNavItems = {
     'Inventory Clerk': [
         {
             id: 0,
-            icon: <DashboardRoundedIcon />,
+            // icon: <DashboardRoundedIcon />,
             label: 'Dashboard',
             route: 'dashboard'
         },
         {
             id: 1,
-            icon: <WarehouseRoundedIcon />,
+            // icon: <WarehouseRoundedIcon />,
             label: 'Inventory',
             route: 'inventory'
         },
         {
             id: 3,
-            icon: <LocalShippingRoundedIcon />,
+            // icon: <LocalShippingRoundedIcon />,
             label: 'Suppliers',
             route: 'suppliers'
         },
@@ -88,13 +88,13 @@ export const userNavItems = {
     'Cashier': [
         {
             id: 0,
-            icon: <DashboardRoundedIcon />,
+            // icon: <DashboardRoundedIcon />,
             label: 'Dashboard',
             route: 'dashboard'
         },
         {
             id: 1,
-            icon: <PointOfSaleRoundedIcon />,
+            // icon: <PointOfSaleRoundedIcon />,
             label: 'POS',
             route: 'pos'
         },
