@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate, useLocation, Outlet } from "react-router-dom";
 import { useSnackbar } from 'notistack';
 
 import Layout from "../../layout/layout";
@@ -19,7 +19,7 @@ import { getSupplierInfoApi, getPurchaseInfoApi, getPOInfoApi } from '../supplie
 import { getActivityHistoryApi, getLoginHistoryApi } from '../history/slice';
 import { getAllGramSoldApi } from '../dashboard/slice';
 
-const MainContainer = ({ children }) => {
+const MainContainer = () => {
     const { enqueueSnackbar } = useSnackbar();
     const location = useLocation();
     let navigate = useNavigate();
@@ -132,7 +132,7 @@ const MainContainer = ({ children }) => {
                 isAuthenticated ? <Layout
                     navbar={<Navbar />}
                     header={onRenderHeader()}
-                    pages={children}
+                    pages={<Outlet />}
                 /> : registerRoute()
             }
         </React.Fragment>

@@ -1,31 +1,31 @@
-import "@fontsource/poppins";
 import React from 'react';
-// import { createRoot } from 'react'
 import ReactDOM from 'react-dom/client';
 import { Provider } from 'react-redux';
-import { SnackbarProvider } from 'notistack';
 import store from './redux/store';
-import { BrowserRouter } from 'react-router-dom';
+import { RouterProvider } from 'react-router-dom';
 import { ThemeProvider } from '@mui/material/styles';
 import CssBaseline from '@mui/material/CssBaseline';
-import App from './app';
+import { SnackbarProvider } from 'notistack';
 import theme from './theme';
+import routes from "./routes";
+import "@fontsource/poppins";
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
-  <SnackbarProvider
-    maxSnack={3}
-    anchorOrigin={{
-      horizontal: "right",
-      vertical: "top"
-    }}>
-    <Provider store={store}>
-      <ThemeProvider theme={theme}>
-        <CssBaseline />
-        <BrowserRouter>
-          <App />
-        </BrowserRouter>
-      </ThemeProvider >
-    </Provider>
-  </SnackbarProvider>
+  <React.StrictMode>
+    <SnackbarProvider
+      maxSnack={3}
+      anchorOrigin={{
+        horizontal: "right",
+        vertical: "top",
+      }}
+    >
+      <Provider store={store}>
+        <ThemeProvider theme={theme}>
+          <CssBaseline />
+          <RouterProvider router={routes} />
+        </ThemeProvider>
+      </Provider>
+    </SnackbarProvider>
+  </React.StrictMode>
 );
 
