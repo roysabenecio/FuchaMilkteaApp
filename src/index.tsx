@@ -1,5 +1,7 @@
+import "@fontsource/poppins";
 import React from 'react';
-import ReactDOM from 'react-dom';
+// import { createRoot } from 'react'
+import ReactDOM from 'react-dom/client';
 import { Provider } from 'react-redux';
 import { SnackbarProvider } from 'notistack';
 import store from './redux/store';
@@ -9,9 +11,7 @@ import CssBaseline from '@mui/material/CssBaseline';
 import App from './app';
 import theme from './theme';
 
-import "@fontsource/poppins";
-
-ReactDOM.render(
+ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <SnackbarProvider
     maxSnack={3}
     anchorOrigin={{
@@ -27,7 +27,5 @@ ReactDOM.render(
       </ThemeProvider >
     </Provider>
   </SnackbarProvider>
-  ,
-  document.getElementById('root')
 );
 
