@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
-import { BASE_URL } from "../../api";
+import { BASE_URL } from "../api";
 
 export const getAllGramSoldApi = createAsyncThunk('get-all-gram-sold', async () => {
   const res = await axios.get(`${BASE_URL}/api/Extra/AllGramSold`);

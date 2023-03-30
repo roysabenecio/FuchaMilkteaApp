@@ -1,6 +1,6 @@
 import { createSlice,  createAsyncThunk } from "@reduxjs/toolkit";
 import axios from 'axios';
-import { BASE_URL } from "../../api";
+import { BASE_URL } from "../api";
 
 export const registerUser = createAsyncThunk('register-user', async(data) => {
   data = {...data, userStatus: 'Pending'};

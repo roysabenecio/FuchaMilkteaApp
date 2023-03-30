@@ -1,6 +1,6 @@
 import { createAsyncThunk, createSlice } from "@reduxjs/toolkit";
 import axios from "axios";
-import { BASE_URL } from "../../api";
+import { BASE_URL } from "../api";
 
 export const getOrdersInfoApi = createAsyncThunk('get-orders-info', async () => {
     const response = await axios.get(`${BASE_URL}/api/Sales/AllOrders`);

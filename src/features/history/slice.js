@@ -1,6 +1,6 @@
 import { createSlice,  createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
-import { BASE_URL } from "../../api";
+import { BASE_URL } from "../api";
 
 export const getLoginHistoryApi = createAsyncThunk('get-login-history', async () => {
   const response = await axios.get(`${BASE_URL}/api/History/AllLoginHistory`)

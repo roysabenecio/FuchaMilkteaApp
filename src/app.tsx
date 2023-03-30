@@ -1,6 +1,6 @@
-import AppRoutes from './routes';
+import AppRoutes from '../routes';
 // import { hot } from 'react-hot-loader';
-import MainContainer from './features/main/main';
+import MainContainer from '../features/main/main';
 import React from 'react';
 
 const App = () => {

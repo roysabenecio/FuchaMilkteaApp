@@ -1,6 +1,6 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
-import { BASE_URL } from "../../api";
+import { BASE_URL } from "../api";
 
 // First, create the thunk
 // const getUserInfoByNameAndPassword = createAsyncThunk(
@@ -54,6 +54,9 @@ export const loginSlice = createSlice({
     clearLoginErrors: (state) => {
       state.loginErrors = null
     },
+    setLoginErrors: (state, action) => {
+      state.loginErrors = action.payload
+    }
   },
   extraReducers: {
     [getUserInfoApi.fulfilled]: (state, action) => {
@@ -111,4 +114,4 @@ export const loginSlice = createSlice({
 
 export const loginReducer = loginSlice.reducer;
 
-export const { getUserInfo, clearUserInfo, clearLoginErrors, reloginUserInfo } = loginSlice.actions;
+export const { getUserInfo, clearUserInfo, clearLoginErrors, reloginUserInfo, setLoginErrors } = loginSlice.actions;
