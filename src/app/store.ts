@@ -9,12 +9,12 @@ import { inventoryReducer } from '../features/inventory/slice';
 import { salesReportReducer } from '../features/sales-report/slice';
 import { historyReducer } from '../features/history/slice';
 import { dashboardReducer } from '../features/dashboard/slice';
-import { api } from '../features/api/apiSlice';
+import { apiSlice } from '../features/api/apiSlice';
 
 //add slice's here
 const store = configureStore({
     reducer: {
-        [api.reducerPath]: api.reducer, // RTK Query
+        [apiSlice.reducerPath]: apiSlice.reducer, // RTK Query
         login: loginReducer,
         registerReducer: registerReducer,
         supplier: supplierReducer,
@@ -27,7 +27,10 @@ const store = configureStore({
         dashboard: dashboardReducer
     },
     middleware: (getDefaultMiddleware) => 
-        getDefaultMiddleware().concat(api.middleware)
+        getDefaultMiddleware().concat(apiSlice.middleware)
 });
+
+export type RootState = ReturnType<typeof store.getState>;
+export type AppDispatch = typeof store.dispatch;
 
 export default store;
