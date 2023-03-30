@@ -25,7 +25,9 @@ const store = configureStore({
         salesReport: salesReportReducer,
         history: historyReducer,
         dashboard: dashboardReducer
-    }
+    },
+    middleware: (getDefaultMiddleware) => 
+        getDefaultMiddleware().concat(api.middleware)
 });
 
 export default store;
