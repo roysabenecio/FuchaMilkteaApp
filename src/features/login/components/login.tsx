@@ -4,55 +4,13 @@ import { Link } from "react-router-dom";
 import { useForm, Controller } from "react-hook-form";
 import loginCss from './styles';
 import { default as color } from '../../../util/color-palette';
-import { loginUserApi } from '../slice';
-import { useAppDispatch } from '../../../app/hooks';
-import { useLoginMutation } from '../../api/apiSlice';
+import type { LoginForm } from '../../../app/types/types';
 
-import { useEffect } from 'react';
-
-import { setLoginErrors } from '../slice'
-
-
-const Login = (props:any) => {
-  const [ login, { isSuccess, data } ] = useLoginMutation();
-  const { handleSubmit, control } = useForm();
-  const onLogin = async (data: any) => {
-    login(data)
-    // dispatch(useLoginMutation(data));
-    // console.log(dispatch(loginUserApi(data)));
-    // dispatch(loginUserApi(data)); // fix
-
-
-    if (data.ok) {
-      // state.userInfo = state.loginInfo.ok;
-      localStorage.setItem("userInfo", JSON.stringify(data.ok));
-      localStorage.setItem("authToken", JSON.stringify(data.token));
-      localStorage.setItem("loginCount", JSON.stringify(1));
-    }
-    if (!data.ok) {
-      // data.loginErrors = action.payload;
-      props.dispatch(setLoginErrors(data.loginErrors));
-    }
-  };
-
-  // const loginErrors = useSelector(state => state.loginErrors)
-
-  useEffect(() => { 
-    // if (data.ok) {
-    //   // state.userInfo = state.loginInfo.ok;
-    //   localStorage.setItem("userInfo", JSON.stringify(data.ok));
-    //   localStorage.setItem("authToken", JSON.stringify(data.token));
-    //   localStorage.setItem("loginCount", JSON.stringify(1));
-    // }
-    if (data !== undefined) {
-      // data.loginErrors = action.payload;
-      props.dispatch(setLoginErrors(data.loginErrors));
-    }
-    console.log(data) 
-  },[isSuccess])
+const Login = (props: any) => {
+  const { handleSubmit, control } = useForm<LoginForm>();
 
   return (
-    <form onSubmit={handleSubmit(data => onLogin(data))}>
+    <form onSubmit={handleSubmit(credentials => props.onLogin(credentials))}>
       <Box css={loginCss.parent}>
         <Box css={loginCss.formDiv}>
           <Box>
@@ -74,9 +32,6 @@ const Login = (props:any) => {
                 <TextField
                   {...field}
                   label="Username"
-                  margin="dense"
-                  size='small'
-                  required
                   autoFocus
                   css={loginCss.textField}
                 />
@@ -92,16 +47,14 @@ const Login = (props:any) => {
                   {...field}
                   label="Password"
                   type="password"
-                  margin="dense"
-                  size='small'
-                  required
                   css={loginCss.textField}
                 />
               )}
             />
+
             <Button
               css={loginCss.button}
-              // variant="loginBtn" //fix
+              variant="loginBtn" //fix
               disableElevation
               size="large"
               type='submit'
@@ -129,15 +82,10 @@ const Login = (props:any) => {
             </Box>
           </Box>
         </Box>
-        <Box css={loginCss.displayImgPane} >
-          <Grow in={true} timeout={1000}>
-            <Box css={loginCss.displayImgDiv}>
-              <img
-                css={loginCss.displayImg}
-                src="images\Group-display.png"
-                alt="" />
-            </Box>
-          </Grow>
+        <Box css={loginCss.displayImgPane}>
+          <Box css={loginCss.displayImgDiv} component={Grow} in={true} timeout={1000}>
+            <img css={loginCss.displayImg} src="images\Group-display.png" alt="" />
+          </Box>
         </Box>
       </Box>
     </form>
