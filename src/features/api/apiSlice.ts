@@ -22,13 +22,40 @@ export const apiSlice = createApi({
   endpoints: (build) => ({
     login: build.mutation({
       query: (userCredentials) => ({
-        url: "/api/Auth/LoginUser",
+        url: "/api/Auth/Login",
         method: "POST",
         body: userCredentials,
         // mode: 'cors'
       }),
     }),
+    addLoginActivity: build.mutation({
+      query: userId => ({
+        url: "/api/Auth/LoginActivity",
+        method: "POST",
+        body: userId,
+      })
+    }),
+    register: build.mutation({
+      query: userInfo => ({
+        url: "/api/Users/Register",
+        method: "POST",
+        body: userInfo,
+      }),
+    }),
+    validateUsername: build.mutation({
+      query: username => ({
+        url: "/api/Users/ValidateUsername",
+        method: "POST",
+        body: username,
+      })
+    }),
   }),
 });
 
-export const { useLoginMutation } = apiSlice;
+export const { 
+  useLoginMutation, 
+  useAddLoginActivityMutation,
+  useRegisterMutation,
+  useValidateUsernameMutation
+
+} = apiSlice;
