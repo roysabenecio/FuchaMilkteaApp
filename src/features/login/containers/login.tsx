@@ -12,16 +12,15 @@ const LoginContainer = () => {
   const [, setToken] = useToken();
   const { enqueueSnackbar } = useSnackbar();
   const dispatch = useAppDispatch();
-  const [login, { isSuccess, data, error }] = useLoginMutation({
+  const [login, { isSuccess, data }] = useLoginMutation({
     fixedCacheKey: 'shared-login-state',
   });
   const [addLoginActivity] = useAddLoginActivityMutation();
-  
   const onLogin = (credentials: LoginForm) => {
     login(credentials)
-  }
+  };
 
-  useEffect(() => { 
+  useEffect(() => {
     // Checks if there is data, and has user info from server
     if (data !== undefined && Object.hasOwn(data, 'ok')) {
       setToken(data.token)
@@ -33,14 +32,14 @@ const LoginContainer = () => {
     // Gets the login errors directly from data using the Object.values
     if (data !== undefined && !Object.hasOwn(data, 'ok')) {
       enqueueSnackbar(Object.values(data)[0] as string, {
-        variant: 'error',
+        variant: Object.keys(data).toString() === "accountPending" ? "warning" : "error",
         autoHideDuration: 2000,
       });
-   }
-  },[isSuccess])
+    }
+  }, [isSuccess]);
 
-  return <Login 
-    dispatch={dispatch} 
+  return <Login
+    dispatch={dispatch}
     onLogin={onLogin}
   />;
 };
