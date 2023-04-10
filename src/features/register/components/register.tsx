@@ -1,29 +1,48 @@
 
 /** @jsxImportSource @emotion/react */
-import { useEffect } from 'react';
-import { useSelector } from 'react-redux';
+import { useEffect, useState } from 'react';
 import { Link, useNavigate } from "react-router-dom";
 import { useForm, Controller } from "react-hook-form";
 import { TextField, Box, Button, Typography, Grid, MenuItem } from '@mui/material';
 import { useSnackbar } from 'notistack';
+import { useRegisterMutation, useValidateUsernameMutation } from '../../api/apiSlice';
+import type{ RegisterForm, RegisterUser } from '../../../app/types/types';
 import loginCss from './styles';
 import { default as color } from '../../../util/color-palette';
 
-const Register = ({ dispatch, registerUser, getAllUsersInfoApi }) => {
+const Register = () => {
   const navigate = useNavigate();
   const { enqueueSnackbar } = useSnackbar();
-  const { usersInfo } = useSelector((state) => state.users);
-  const { handleSubmit, watch, control, formState: { errors } } = useForm();
+  const [userInfo, setUserInfo] = useState<RegisterUser>();
+  const { handleSubmit, watch, control, formState: { errors } } = useForm<RegisterForm>();
+  const [register, {data: registrationData, reset: resetRegister}] = useRegisterMutation();
+  const [validateUsername, {data: validationData, reset: resetValidate}] = useValidateUsernameMutation();
 
-  const onRegister = (data) => {
-    if (usersInfo.some(i => i.userName !== data.userName) && (data.password === data.confirmPassword)) {
-      dispatch(registerUser(data));
+  const onValidate = (userInfo: RegisterUser ) => {
+    delete userInfo.confirmPassword;
+    setUserInfo(userInfo);
+    validateUsername({"username": userInfo.userName});
+  };
+
+  useEffect(() => {
+    if (validationData === false) {
+      register(userInfo);
+      resetValidate();
+    } else if (validationData === true) {
+      enqueueSnackbar("Username already exists", {
+        variant: 'warning'
+      });
+      resetValidate();
+    }
+
+    if (registrationData === true){
       enqueueSnackbar("Account has been created", {
         variant: 'success'
       });
-      navigate("/login");
+      navigate('/login');
+      resetRegister();
     }
-  };
+  }, [validationData, registrationData]);
 
   //VALIDATIONS
   const validations = {
@@ -31,18 +50,18 @@ const Register = ({ dispatch, registerUser, getAllUsersInfoApi }) => {
       value: /^[\.a-zA-Z, ]*$/,
       message: 'Please enter characters from A to Z only'
     },
-    username: (userName) => {
-      if (usersInfo.some(i => i.userName === userName)) {
-        return "Username already exists. Please use another.";
-      }
-    },
+    // username: (userName) => {
+    //   if (usersInfo.some(i => i.userName === userName)) {
+    //     return "Username already exists. Please use another.";
+    //   }
+    // },
     password: {
       minLength: {
         value: 8,
         message: "Password must be at least 8 characters"
       },
-      comparePasswords: (confirmPassword) => {
-        const password = watch('password');
+      comparePasswords: (confirmPassword: string) => {
+        let password = watch('password');
         if (password !== confirmPassword) {
           return "Passwords do not match";
         }
@@ -50,12 +69,12 @@ const Register = ({ dispatch, registerUser, getAllUsersInfoApi }) => {
     },
   };
 
-  useEffect(() => {
-    dispatch(getAllUsersInfoApi);
-  }, []);
+  // useEffect(() => {
+  //   dispatch(getAllUsersInfoApi);
+  // }, []);
 
   return (
-    <form onSubmit={handleSubmit(data => onRegister(data))}>
+    <form onSubmit={handleSubmit(userInfo => onValidate(userInfo))}>
       <Box css={loginCss.parent}>
         <Box css={loginCss.formDiv}>
           <Box>
@@ -135,7 +154,7 @@ const Register = ({ dispatch, registerUser, getAllUsersInfoApi }) => {
               defaultValue=""
               control={control}
               rules={{
-                validate: validations.username
+                // validate: validations.username
               }}
               render={({ field }) => (
                 <TextField
@@ -158,7 +177,7 @@ const Register = ({ dispatch, registerUser, getAllUsersInfoApi }) => {
                 minLength: validations.password.minLength
               }}
               defaultValue=''
-              required
+              // required
               render={({ field }) => (
                 <TextField
                   {...field}
@@ -182,7 +201,7 @@ const Register = ({ dispatch, registerUser, getAllUsersInfoApi }) => {
                 validate: validations.password.comparePasswords
               }}
               defaultValue=''
-              required
+              // required
               render={({ field }) => (
                 <TextField
                   {...field}
