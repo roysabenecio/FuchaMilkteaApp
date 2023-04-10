@@ -1,6 +1,12 @@
 import { createTheme } from '@mui/material/styles';
 import color from './util/color-palette';
 
+declare module '@mui/material/Button' {
+  interface ButtonPropsVariantOverrides {
+    loginBtn: true;
+  }
+}
+
 const theme = createTheme({
   typography: {
     fontFamily: [
@@ -34,6 +40,18 @@ export default createTheme(theme, {
     //   }
     //   `
     // },
+    MuiTextField: {
+      styleOverrides: {
+        root: {
+          // size: 'small'
+        }
+      },
+      defaultProps: {
+        size: 'small',
+        margin: 'dense',
+        required: true
+      }
+    },
     MuiAppBar: {
       styleOverrides: {
         root: {
