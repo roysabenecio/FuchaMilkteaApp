@@ -13,11 +13,13 @@ import HighlightOffRoundedIcon from '@mui/icons-material/HighlightOffRounded';
 import ErrorRoundedIcon from '@mui/icons-material/ErrorRounded';
 
 const Dashboard = ({
-	salesGraphInfo,
-	itemSold,
-	totalAmount,
+	// salesGraphInfo,
+	// itemSold,
+	// totalAmount,
 	gramsSoldInfo,
-	warningLevels
+	warningLevels,
+	monthlySales,
+	dailySales
 }) => {
 
 	const statusColor = (status) => {
@@ -35,34 +37,34 @@ const Dashboard = ({
 		};
 	};
 
-	const salesByYear = () => {
-		const months = salesGraphInfo.labels.filter(y => y.includes(moment().format("YYYY")));
-		const salesInfo = salesGraphInfo.labels.reduce((o, k, i) => ({ ...o, [k]: salesGraphInfo.values[i] }), {});
+	// const salesByYear = () => {
+	// 	const months = salesGraphInfo.labels.filter(y => y.includes(moment().format("YYYY")));
+	// 	const salesInfo = salesGraphInfo.labels.reduce((o, k, i) => ({ ...o, [k]: salesGraphInfo.values[i] }), {});
 
-		let filteredValues = [];
+	// 	let filteredValues = [];
 
-		loop1:
-		for (const month of months) {
-			for (let [key, value] of Object.entries(salesInfo)) {
-				if (month === key) {
-					filteredValues.push(value);
-					continue loop1;
-				}
-			}
-			filteredValues.push(0)
-		}
+	// 	loop1:
+	// 	for (const month of months) {
+	// 		for (let [key, value] of Object.entries(salesInfo)) {
+	// 			if (month === key) {
+	// 				filteredValues.push(value);
+	// 				continue loop1;
+	// 			}
+	// 		}
+	// 		filteredValues.push(0)
+	// 	}
 
-		const data = {
-			labels: months,
-			datasets: [{
-				label: "Sales (PHP)",
-				data: filteredValues,
-				borderColor: "green",
-				tension: 0.5
-			}],
-		};
-		return data;
-	};
+	// 	const data = {
+	// 		labels: months,
+	// 		datasets: [{
+	// 			label: "Sales (PHP)",
+	// 			data: filteredValues,
+	// 			borderColor: "green",
+	// 			tension: 0.5
+	// 		}],
+	// 	};
+	// 	return data;
+	// };
 
 	return (
 		<Grid container spacing={2} >
@@ -90,7 +92,8 @@ const Dashboard = ({
 										Sold
 									</Typography>
 									<Typography	sx={styles.overviewSubText}>
-										{itemSold == null || itemSold == 0 || itemSold == undefined ? 0 : itemSold}
+										{/* {itemSold == null || itemSold == 0 || itemSold == undefined ? 0 : itemSold} */}
+										{dailySales.itemsSold == null || dailySales.itemsSold == 0 || dailySales.itemsSold == undefined ? 0 : dailySales.itemsSold}
 									</Typography>
 								</Box>
 							</Grid>
@@ -102,7 +105,8 @@ const Dashboard = ({
 									<Typography
 										sx={styles.overviewText}>Amount</Typography>
 									<Typography
-										sx={styles.overviewSubText}>₱ {totalAmount == null || totalAmount == 0 || totalAmount == undefined ? 0 : totalAmount}
+										// sx={styles.overviewSubText}>₱ {totalAmount == null || totalAmount == 0 || totalAmount == undefined ? 0 : totalAmount}
+										sx={styles.overviewSubText}>₱ {dailySales.dailySales == null || dailySales.dailySales == 0 || dailySales.dailySales == undefined ? 0 : dailySales.dailySales}
 									</Typography>
 								</Box>
 							</Grid>
@@ -174,7 +178,8 @@ const Dashboard = ({
 
 			<Grid item md={12} xs={12} width={'100%'} >
 				<Card>
-					{/* <LineGraph data={salesByYear()} height={"75%"} /> */}
+					<LineGraph height={"25%"} width={"100%"} monthlySales={monthlySales}/>
+					{/* <LineGraph /> */}
 				</Card>
 			</Grid>
 
