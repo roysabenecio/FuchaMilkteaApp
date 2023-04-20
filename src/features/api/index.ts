@@ -1,7 +1,7 @@
 import axios from "axios";
 
-// export const BASE_URL = 'https://localhost:7280'; // local SQL Server Connection
-export const BASE_URL = 'https://fuchawebapp.azurewebsites.net'; // Azure Connection
+export const BASE_URL = 'https://localhost:7280'; // local SQL Server Connection
+// export const BASE_URL = 'https://fuchawebapp.azurewebsites.net'; // Azure Connection
 
 export const ENDPOINTS = {
     Users: {
