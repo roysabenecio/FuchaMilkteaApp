@@ -2,30 +2,28 @@ import Box from "@mui/material/Box";
 import Grid from "@mui/material/Grid";
 import TextField from "@mui/material/TextField";
 import Typography from "@mui/material/Typography";
-import { Controller, useForm, useFormContext } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import styles from "./styles";
 import MenuItem from "@mui/material/MenuItem";
 import Stack from "@mui/material/Stack";
 import Button from "@mui/material/Button";
-import Modal from "@mui/material/Modal";
-import CircularProgress from "@mui/material/CircularProgress";
 import { Validations } from "../../../app/validations";
 import { AddUserFormFCProps, RegisterForm } from "../../../app/types/types";
 
 const AddUserForm = (props: AddUserFormFCProps) => {
-  const { handleSubmit, control, clearErrors, reset, watch, formState: { errors } } = useForm<RegisterForm>({
+  const { handleSubmit, control, watch, getValues, formState: { errors } } = useForm<RegisterForm>({
     defaultValues: {
       firstName: "",
       lastName: "",
       userName: "",
-      // userStatus: "",
       password: "",
       confirmPassword: "",
       role: "",
     }
   });
-  // const {handleSubmit, reset} = useFormContext();
-  // if (props.currRow === undefined) return null
+
+  const passwordValue = watch('password');
+  const comparePasswords = () => passwordValue !== getValues("confirmPassword") ? "Passwords do not match" : undefined;
 
   return (
     <form onSubmit={handleSubmit(data => props.onValidate(data))}>
@@ -128,7 +126,7 @@ const AddUserForm = (props: AddUserFormFCProps) => {
               name='confirmPassword'
               control={control}
               rules={{
-                // validate: Validations.password.comparePasswords //fix
+                validate: comparePasswords
               }}
               defaultValue=''
               render={({ field }) => (
