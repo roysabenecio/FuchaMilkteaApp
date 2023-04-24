@@ -54,7 +54,7 @@ const Login = (props: any) => {
 
             <Button
               css={loginCss.button}
-              variant="loginBtn" //fix
+              variant="loginBtn"
               disableElevation
               size="large"
               type='submit'
