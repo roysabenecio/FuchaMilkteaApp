@@ -8,26 +8,52 @@ import {
   InputAdornment,
   TextField,
   Grow,
-  IconButton,
-  Card,
   Tooltip,
   Modal,
   Button,
-  MenuItem
+  MenuItem,
+  IconButton,
+  Card,
 } from '@mui/material';
 import { useSnackbar } from 'notistack';
-import { default as styles } from './styles';
-import BasicTable from '../../../shared-components/table/table';
 import BasicDialog from '../../../shared-components/basic-dialog/basic-dialog';
 //icons
-import AddIcon from '@mui/icons-material/Add';
+import InfoRoundedIcon from '@mui/icons-material/InfoRounded';
 import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
+import AddIcon from '@mui/icons-material/Add';
 import EditRoundedIcon from '@mui/icons-material/EditRounded';
 import DeleteRoundedIcon from '@mui/icons-material/DeleteRounded';
-import InfoRoundedIcon from '@mui/icons-material/InfoRounded';
+import { useAppSelector } from '../../../app/hooks';
+import { useDeleteUserMutation, useEditUserMutation, useRegisterMutation, useRestoreUserMutation } from '../apiSlice';
+import { default as styles } from './styles';
+import type { EditUserFormInputs, RegisterForm, RegisterUser, UserDTO, UsersFCProps } from "../../../app/types/types";
+import ExistingUserTable from './existingUserTable';
+import { Validations } from '../../../app/validations';
+import { useValidateUsernameMutation } from '../../../app/centralApiSlice';
+import UserArchiveTable from './userArchiveTable';
+import AddUserForm from './addUserForm';
+import EditUserForm from './editUserForm';
 
-const Users = ({ dispatch, tableInfo, reducers, usersInfo, renderMobileUserCol }) => {
+const Users = ({ usersInfo, existingUsers, removedUsers}: UsersFCProps) => {
   const { enqueueSnackbar } = useSnackbar();
+
+  //Data
+  const [currRow , setRow] = useState<UserDTO>();
+  const [userInfo, setUserInfo] = useState<RegisterForm>()
+
+  // Queries
+  const [deleteUser, {data: deletionData, reset: resetUserDelete}] = useDeleteUserMutation();
+  const [restoreUser, {data: restorationData, reset: resetUserRestore}] = useRestoreUserMutation();
+  const [register, {data: registrationData, reset: resetRegister}] = useRegisterMutation();
+  const [editUser, {data: editData, reset: resetEdit}] = useEditUserMutation();
+  const [ validateUsername, {data: validationData, reset: resetValidate} ] = useValidateUsernameMutation();
+
+  // Store Data
+  const {userInfo: sliceUserInfo} = useAppSelector(state => state.login);
+
+  // Form
+  const  { control, reset, watch }  = useForm();
+
   //Alert
   const [open, setOpen] = useState(false);
   const handleAlertOpen = () => {
@@ -58,137 +84,145 @@ const Users = ({ dispatch, tableInfo, reducers, usersInfo, renderMobileUserCol }
   });
 
   //MODAL CONTROLS
-  const { handleSubmit, control, clearErrors, reset, watch, formState: { errors } } = useForm();
   const [addOpen, setAddOpen] = useState(false);
   const handleAddModal = () => setAddOpen(true);
   const [editOpen, setEditOpen] = useState(false);
   const handleEditModal = () => {
     setEditOpen(true);
   };
-  const handleClose = (data) => {
+  const handleClose = () => {
     reset();
     setAddOpen(false);
     setEditOpen(false);
+    setRow(undefined)
   };
-
-  //Data
-  const [currRow, setRow] = useState('');
+  
   //Callback Function
-  const tableToUsers = (tableData) => {
+  const tableToUsers = (tableData: UserDTO) => {
     setRow(tableData);
   };
 
-  const onSubmitPost = (data) => {
-    data = {
-      ...data,
-      userId: parseInt(JSON.parse(localStorage.getItem("userInfo")).id)
-    };
-    dispatch(reducers.postUserInfoApi(data));
-    handleClose();
+  // Form Functions
+  const onValidate = (data: RegisterForm) => {
+    setUserInfo(data)
+    validateUsername({ "username": data.userName})
   };
 
-  const onSubmitPut = (data) => {
-    data = {
+  const onSubmitPut = (data?: EditUserFormInputs) => {
+    const fullData = {
       ...data,
-      id: currRow.id,
-      userId: parseInt(JSON.parse(localStorage.getItem("userInfo")).id),
-      // dateCreated: currRow.dateCreated,
-      //password: currRow.password
-    };
-    enqueueSnackbar("Updated user", {
-      variant: 'success'
-    });
-    dispatch(reducers.putUserInfoApi(data));
+      id: currRow!.id,
+      actorId: sliceUserInfo.userId
+    }
+    editUser(fullData);
     setEditOpen(!editOpen);
-    setRow('');
+    setRow(undefined);
   };
-
+  
   const onSubmitDelete = () => {
-    if (currRow.id == 1) {
+    if (currRow!.id == 1) {
       enqueueSnackbar("This user cannot be deleted", {
         variant: 'error'
       });
-    } else if (parseInt(JSON.parse(localStorage.getItem("userInfo")).id) == currRow.id) {
-      enqueueSnackbar("You cannot delete your account", {
-        variant: 'error'
-      });
-    }
+    } 
+    // else if (parseInt(JSON.parse(localStorage.getItem("userInfo")).id) == currRow.id) {
+    //   enqueueSnackbar("You cannot delete your account", {
+    //     variant: 'error'
+    //   });
+    // }
     else {
       let data = {
-        userId: parseInt(JSON.parse(localStorage.getItem("userInfo")).id),
-        id: currRow.id
+        id: currRow!.id,
+        actorId: sliceUserInfo.userId
+      }
+      deleteUser(data);
+    }
+    handleAlertClose();
+    setRow(undefined);
+  };
+  
+  const onSubmitRestore = () => {
+    let data = {
+      id: currRow!.id,
+      actorId: sliceUserInfo.userId
+    }
+    restoreUser(data);
+    handleRestoreClose();
+    setRow(undefined);
+  };
+
+  // Search Function
+  const existingUserText = watch("searchExistUser");
+  const searchExistingUser = (text: string) => {
+    return existingUsers.filter(s => {
+      if (text == "" || text == undefined) {
+        return existingUsers.map(x => x);
+      }
+      if (s['First Name'].toLowerCase().includes(text!) ||
+        s['Last Name'].toLowerCase().includes(text!) ||
+        s['Username'].toLowerCase().includes(text!) ||
+        s.Role.toLowerCase().includes(text!)) {
+        return s
+      }
+    });
+  };
+  const existingUserFilter = searchExistingUser(existingUserText);
+
+  const removedUserText = watch("searchRemovedUser");
+  const searchRemovedUser = (text: string) => {
+    return removedUsers.filter(s => {
+      if (text == "" || text == undefined) {
+        return removedUsers.map(x => x);
+      }
+      if (s['First Name'].toLowerCase().includes(text) ||
+      s['Last Name'].toLowerCase().includes(text) ||
+      s['Username'].toLowerCase().includes(text) ||
+      s.Role.toLowerCase().includes(text)) {
+        return s
       };
-      dispatch(reducers.removeUserInfoApi(data));
+    });
+  };
+  const removedUserFilter = searchRemovedUser(removedUserText);
+
+  // Side Effects
+  // Action Notifications
+  useEffect(() => {
+    if (deletionData === true) {
       enqueueSnackbar("User deleted", {
         variant: 'success'
       });
+      resetUserDelete();
     }
-    handleAlertClose();
-    setRow('');
-  };
-
-  const onSubmitRestore = () => {
-    let data = {
-      userId: parseInt(JSON.parse(localStorage.getItem("userInfo")).id),
-      id: currRow.id
-    };
-    dispatch(reducers.restoreUserInfoApi(data));
-    enqueueSnackbar("User restored", {
-      variant: 'success'
-    });
-    handleRestoreClose();
-    setRow('');
-  };
-
-  //FORM VALIDATION
-  const validations = {
-    name: {
-      value: /^[\.a-zA-Z, ]*$/,
-      message: 'Please enter characters from A to Z only'
-    },
-    username: (userName) => {
-      if (currRow.userName === userName) {
-        clearErrors("userName");
-      }
-      else if (usersInfo.some(i => i.userName === userName)) {
-        return "Username already exists. Please use another.";
-      }
-    },
-    password: {
-      minLength: {
-        value: 8,
-        message: "Password must be at least 8 characters"
-      },
-      comparePasswords: (confirmPassword) => {
-        const password = watch('password');
-        if (password !== confirmPassword) {
-          return "Passwords do not match"
-        }
-      }
+    if (restorationData === true) {
+      enqueueSnackbar("User restored", {
+        variant: 'success'
+      });
+      resetUserRestore();
     }
-  };
-
-  //SEARCH 
-  const existUserText = watch("searchExistUser");
-  const removedUserText = watch("searchRemovedUser");
-
-  const searchExistUser = (text) => {
-    return tableInfo.existingUsers.info.filter(s => {
-      if (s.firstName.toLowerCase().includes(text) || s.lastName.toLowerCase().includes(text) || s.userName.toLowerCase().includes(text) || s.role.toLowerCase().includes(text)) {
-        return s
-      };
-    });
-  };
-  const searchRemovedUser = (text) => {
-    return tableInfo.removedUsers.info.filter(s => {
-      if (s.firstName.toLowerCase().includes(text) || s.lastName.toLowerCase().includes(text) || s.userName.toLowerCase().includes(text) || s.role.toLowerCase().includes(text)) {
-        return s
-      };
-    });
-  };
-
-  const existUserFilter = searchExistUser(existUserText);
-  const removedUserFilter = searchRemovedUser(removedUserText);
+    if (registrationData === true){
+      enqueueSnackbar("Account has been created", {
+        variant: 'success'
+      });
+      resetRegister();
+    }
+    if (editData === true){
+      enqueueSnackbar("Updated user", {
+        variant: 'success'
+      });
+      resetRegister();
+    }
+    if (validationData === true) {
+      enqueueSnackbar("Username already exists", {
+        variant: 'error'
+      });
+      resetValidate();
+    } else if (validationData === false) {
+      register(userInfo);
+      resetRegister();
+      resetValidate();
+      handleClose();
+    }
+  },[deletionData, restorationData, registrationData, editData, validationData]);
 
   return (
     <Grid container spacing={2}>
@@ -214,7 +248,7 @@ const Users = ({ dispatch, tableInfo, reducers, usersInfo, renderMobileUserCol }
                   name='searchExistUser'
                   control={control}
                   defaultValue=""
-                  rules={{ pattern: validations.name }}
+                  rules={{ pattern: Validations.name }}
                   render={({ field }) => (
                     <TextField
                       placeholder="Search"
@@ -225,9 +259,6 @@ const Users = ({ dispatch, tableInfo, reducers, usersInfo, renderMobileUserCol }
                           </InputAdornment>
                         ),
                       }}
-                      margin="dense"
-                      size='small'
-                      fullWidth
                       {...field}
                     />
                   )}
@@ -254,171 +285,13 @@ const Users = ({ dispatch, tableInfo, reducers, usersInfo, renderMobileUserCol }
                 {/* </Tooltip> */}
 
                 {/* ADD USER */}
-                <Modal
-                  open={addOpen}
-                  onClose={handleClose}>
-                  <form onSubmit={handleSubmit(data => onSubmitPost(data))}>
-                    <Box sx={styles.modal}>
-                      <Typography id="modal-modal-title" variant="h6">
-                        Add user
-                      </Typography>
-                      <Grid container spacing={2} mt={1}>
-                        <Grid item md={6}>
-                          <Controller
-                            name="firstName"
-                            defaultValue=""
-                            control={control}
-                            rules={{
-                              pattern: validations.name
-                            }}
-                            render={({ field }) => (
-                              <TextField
-                                label="First name"
-                                margin="dense"
-                                size='small'
-                                required
-                                fullWidth
-                                onChange={field.onChange}
-                                error={Boolean(errors?.firstName)}
-                                helperText={errors.firstName?.message}
-                              />
-                            )}
-                          />
-                        </Grid>
-                        <Grid item md={6}>
-                          <Controller
-                            name="lastName"
-                            control={control}
-                            rules={{
-                              pattern: validations.name
-                            }}
-                            render={({ field }) => (
-                              <TextField
-                                label="Last name"
-                                margin="dense"
-                                size='small'
-                                required
-                                fullWidth
-                                onChange={field.onChange}
-                                error={Boolean(errors?.lastName)}
-                                helperText={errors.lastName?.message}
-                              />
-                            )}
-                          />
-                        </Grid>
-                        <Grid item md={6}>
-                          <Controller
-                            name="userName"
-                            control={control}
-                            rules={{
-                              validate: validations.username,
-                              pattern: {
-                                value: /^[a-zA-Z0-9_.]*$/,
-                                message: "Please enter a valid username"
-                              }
-
-                            }}
-                            render={({ field }) => (
-                              <TextField
-                                label="Username"
-                                margin="dense"
-                                size='small'
-                                required
-                                fullWidth
-                                onChange={field.onChange}
-                                error={Boolean(errors?.userName)}
-                                helperText={errors.userName?.message}
-                              />
-                            )}
-                          />
-                        </Grid>
-                        <Grid item md={6}>
-                          <Controller
-                            name='password'
-                            control={control}
-                            rules={{
-                              minLength: validations.password.minLength
-                            }}
-                            defaultValue=''
-                            required
-                            render={({ field }) => (
-                              <TextField
-                                {...field}
-                                label="Password"
-                                type="password"
-                                margin="dense"
-                                fullWidth
-                                onChange={field.onChange}
-                                error={Boolean(errors?.password)}
-                                helperText={errors.password?.message}
-                                required
-                                size='small'
-                              />
-                            )}
-                          />
-                        </Grid>
-                        <Grid item md={6}>
-                          <Controller
-                            name='confirmPassword'
-                            control={control}
-                            rules={{
-                              validate: validations.password.comparePasswords
-                            }}
-                            defaultValue=''
-                            required
-                            render={({ field }) => (
-                              <TextField
-                                {...field}
-                                label="Confirm Password"
-                                type="password"
-                                margin="dense"
-                                required
-                                fullWidth
-                                size='small'
-                                onChange={field.onChange}
-                                error={Boolean(errors?.confirmPassword)}
-                                helperText={errors?.confirmPassword?.message}
-                              />
-                            )}
-                          />
-                        </Grid>
-                        <Grid item md={6}>
-                          <Controller
-                            name='role'
-                            control={control}
-                            defaultValue=''
-                            render={({ field }) => (
-                              <TextField
-                                select
-                                label="Role"
-                                margin="dense"
-                                size='small'
-                                fullWidth
-                                required
-                                {...field}>
-                                <MenuItem value='Admin'>Admin</MenuItem>
-                                <MenuItem value='Cashier'>Cashier</MenuItem>
-                                <MenuItem value='Inventory Clerk'>Inventory Clerk</MenuItem>
-                              </TextField>
-                            )}
-                          />
-                        </Grid>
-                        <Grid item md={12}>
-                          <Stack direction='row' spacing={2}>
-                            <Button onClick={handleClose} >Cancel</Button>
-                            <Button
-                              variant="contained"
-                              disableElevation
-                              size="large"
-                              type="submit"
-                            >Save
-                            </Button>
-                          </Stack>
-                        </Grid>
-
-                      </Grid>
-                    </Box>
-                  </form>
+                <Modal open={addOpen} onClose={handleClose}>
+                  <>
+                    <AddUserForm
+                      onValidate={onValidate}
+                      handleClose={handleClose}
+                    />
+                  </>
                 </Modal>
 
                 {/* <Tooltip title="Edit user"> */}
@@ -435,147 +308,21 @@ const Users = ({ dispatch, tableInfo, reducers, usersInfo, renderMobileUserCol }
                       variant='text'
                       size='small'
                       onClick={handleEditModal}
-                      disabled={currRow === '' || currRow.isRemoved === true} >
+                      disabled={currRow === undefined || currRow.isRemoved === true} >
                       Edit User
                     </Button>
                   </Box>
                 {/* </Tooltip> */}
 
-                {/* EDIT */}
-                <Modal
-                  open={editOpen}
-                  onClose={handleClose}
-                >
-                  <form onSubmit={handleSubmit(data => onSubmitPut(data))}>
-                    <Box sx={styles.modal}>
-                      <Typography id="modal-modal-title" variant="h6">
-                        Edit user - {currRow.firstName}
-                      </Typography>
-                      <Grid container spacing={2} mt={1}>
-                        <Grid item md={6}>
-                          <Controller
-                            name='firstName'
-                            control={control}
-                            defaultValue={currRow.firstName}
-                            rules={{
-                              pattern: validations.name
-                            }}
-                            render={({ field }) => (
-                              <TextField
-                                label="First name"
-                                margin="dense"
-                                size='small'
-                                required
-                                onChange={field.onChange}
-                                error={Boolean(errors?.firstName)}
-                                helperText={errors.firstName?.message}
-                                fullWidth
-                                {...field}
-                              />
-                            )}
-                          />
-                        </Grid>
-                        <Grid item md={6}>
-                          <Controller
-                            name="lastName"
-                            defaultValue={currRow.lastName}
-                            control={control}
-                            rules={{
-                              pattern: validations.name
-                            }}
-                            render={({ field }) => (
-                              <TextField
-                                label="Last name"
-                                margin="dense"
-                                size='small'
-                                required
-                                onChange={field.onChange}
-                                error={Boolean(errors?.lastName)}
-                                helperText={errors.lastName?.message}
-                                fullWidth
-                                {...field}
-                              />
-                            )}
-                          />
-                        </Grid>
-                        <Grid item md={6}>
-                          <Controller
-                            name="userName"
-                            defaultValue={currRow.userName}
-                            control={control}
-                            rules={{
-                              validate: validations.username
-                            }}
-                            render={({ field }) => (
-                              <TextField
-                                label="Username"
-                                margin="dense"
-                                size='small'
-                                required
-                                onChange={field.onChange}
-                                error={Boolean(errors?.userName)}
-                                helperText={errors.userName?.message}
-                                fullWidth
-                                {...field}
-                              />
-                            )}
-                          />
-                        </Grid>
-                        <Grid item md={6}>
-                          <Controller
-                            name='role'
-                            control={control}
-                            defaultValue={currRow.role}
-                            render={({ field }) => (
-                              <TextField
-                                select
-                                label="Role"
-                                margin="dense"
-                                size='small'
-                                fullWidth
-                                required
-                                {...field}>
-                                <MenuItem value='Admin'>Admin</MenuItem>
-                                <MenuItem value='Cashier'>Cashier</MenuItem>
-                                <MenuItem value='Inventory Clerk'>Inventory Clerk</MenuItem>
-                              </TextField>
-                            )}
-                          />
-                        </Grid>
-                        <Grid item md={6}>
-                          <Controller
-                            name='userStatus'
-                            control={control}
-                            defaultValue={currRow.userStatus}
-                            render={({ field }) => (
-                              <TextField
-                                select
-                                label="Status"
-                                margin="dense"
-                                size='small'
-                                fullWidth
-                                {...field}>
-                                <MenuItem value='Approved'>Approved</MenuItem>
-                                <MenuItem value='Pending'>Pending</MenuItem>
-                              </TextField>
-                            )}
-                          />
-                        </Grid>
-                        <Grid item md={12}>
-                          <Stack direction='row' spacing={2}>
-                            <Button onClick={handleClose} >Cancel</Button>
-                            <Button
-                              variant="contained"
-                              disableElevation
-                              size="large"
-                              type="submit"
-                            >Save
-                            </Button>
-                          </Stack>
-                        </Grid>
-                      </Grid>
-                    </Box>
-                  </form>
+                {/* EDIT */}                
+                <Modal open={editOpen} onClose={handleClose} >
+                  <>
+                    <EditUserForm
+                      currRow={currRow}
+                      onSubmitPut={onSubmitPut}
+                      handleClose={handleClose}
+                    />
+                  </>
                 </Modal>
 
                 {/* <Tooltip title="Delete User"> */}
@@ -592,40 +339,28 @@ const Users = ({ dispatch, tableInfo, reducers, usersInfo, renderMobileUserCol }
                       variant='delete'
                       size='small'
                       onClick={handleAlertOpen}
-                      disabled={currRow === '' || currRow.isRemoved === true} >
+                      disabled={currRow === undefined || currRow.isRemoved === true} >
                       Delete User
                     </Button>
                   </Box>
                 {/* </Tooltip> */}
-
-                {/* Delete User Dialog */}
-                <BasicDialog
-                  openBasicDiag={open}
-                  closeBasicDiag={handleAlertClose}
-                  dialogTitle={"Delete User"}
-                  dialogContentText={"Are you sure you want to delete this user?"}
-                  declineBtnText={"Cancel"}
-                  confirmBtnText={"Delete"}
-                  declineOnClick={handleAlertClose}
-                  confirmOnClick={onSubmitDelete}
-                />
-
-                {/* Restore User Dialog */}
-                <BasicDialog
-                  openBasicDiag={restoreOpen}
-                  closeBasicDiag={handleRestoreClose}
-                  dialogTitle={"Restore User"}
-                  dialogContentText={"Are you sure you want to restore this user?"}
-                  declineBtnText={"Cancel"}
-                  confirmBtnText={"Restore"}
-                  declineOnClick={handleRestoreClose}
-                  confirmOnClick={onSubmitRestore}
-                />
               </Stack>
 
             </Grid>
 
-            {isMobile ?
+            {/* Existing Users Table */}
+            <Grid item md={12}>
+              <Box p={'1px 1em 1em 1em'}>
+                <ExistingUserTable
+                  usersInfo={usersInfo}
+                  existingUsers={existingUsers}
+                  existingUserFilter={existingUserFilter}
+                  tableToModule={tableToUsers}
+                />
+              </Box>
+            </Grid>
+
+            {/* {isMobile ?
               tableInfo.existingUsers.info.length != 0 ?
                 <Grid item md={12}>
                   <Box p={'1px 1em 1em 1em'}>
@@ -647,12 +382,14 @@ const Users = ({ dispatch, tableInfo, reducers, usersInfo, renderMobileUserCol }
                   </Box>
                 </Grid>
                 : null
-            }
+            } */}
 
           </Card>
         </Grow>
       </Grid>
-      {tableInfo.removedUsers.info.length != 0 ?
+
+       {/* User Achived Table */}
+      {removedUsers.length != 0 ?
         <Grid item xs={12} md={12}>
           <Card>
             <Grid item md={12} sx={styles.actionBarWrapper}>
@@ -663,7 +400,7 @@ const Users = ({ dispatch, tableInfo, reducers, usersInfo, renderMobileUserCol }
                 <Typography
                   mt={2}
                   sx={styles.overviewText}
-                  variant='title'
+                  // variant='title'
                 >Archive
                 </Typography>
               </Box>
@@ -678,7 +415,7 @@ const Users = ({ dispatch, tableInfo, reducers, usersInfo, renderMobileUserCol }
                     name='searchRemovedUser'
                     control={control}
                     defaultValue=""
-                    rules={{ pattern: validations.name }}
+                    rules={{ pattern: Validations.name }}
                     render={({ field }) => (
                       <TextField
                         placeholder="Search"
@@ -689,9 +426,6 @@ const Users = ({ dispatch, tableInfo, reducers, usersInfo, renderMobileUserCol }
                             </InputAdornment>
                           ),
                         }}
-                        margin="dense"
-                        size='small'
-                        fullWidth
                         {...field}
                       />
                     )}
@@ -702,14 +436,14 @@ const Users = ({ dispatch, tableInfo, reducers, usersInfo, renderMobileUserCol }
                 <Button
                   variant='outlined'
                   size="small"
-                  disabled={currRow === '' || currRow.isRemoved === false}
+                  disabled={currRow === undefined || currRow.isRemoved === false}
                   onClick={handleRestoreOpen}>Restore User</Button>
               </Stack>
             </Grid>
 
             <Box p={'1px 1em 1em 1em'}>
               {/* User Archive Table */}
-              {isMobile ?
+              {/* {isMobile ?
                 <BasicTable
                   columns={renderMobileUserCol}
                   rows={removedUserFilter}
@@ -719,12 +453,42 @@ const Users = ({ dispatch, tableInfo, reducers, usersInfo, renderMobileUserCol }
                   columns={tableInfo.removedUsers.columns()}
                   rows={removedUserFilter}
                   tableToModule={tableToUsers} />
-              }
+              } */}
+              <UserArchiveTable
+                usersInfo={usersInfo}
+                removedUsers={removedUsers}
+                removedUserFilter={removedUserFilter}
+                tableToModule={tableToUsers}
+              />
             </Box>
           </Card>
         </Grid>
         : null
       }
+
+      {/* Delete User Dialog */}
+      <BasicDialog
+        openBasicDiag={open}
+        closeBasicDiag={handleAlertClose}
+        dialogTitle={"Delete User"}
+        dialogContentText={"Are you sure you want to delete this user?"}
+        declineBtnText={"Cancel"}
+        confirmBtnText={"Delete"}
+        declineOnClick={handleAlertClose}
+        confirmOnClick={onSubmitDelete}
+      />
+
+      {/* Restore User Dialog */}
+      <BasicDialog
+        openBasicDiag={restoreOpen}
+        closeBasicDiag={handleRestoreClose}
+        dialogTitle={"Restore User"}
+        dialogContentText={"Are you sure you want to restore this user?"}
+        declineBtnText={"Cancel"}
+        confirmBtnText={"Restore"}
+        declineOnClick={handleRestoreClose}
+        confirmOnClick={onSubmitRestore}
+      />
 
     </Grid>
   );
