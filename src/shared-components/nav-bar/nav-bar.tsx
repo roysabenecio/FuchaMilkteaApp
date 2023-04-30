@@ -6,9 +6,12 @@ import { reportSubItems, userNavItems } from './constants';
 //icons
 import ArrowDropDownRoundedIcon from '@mui/icons-material/ArrowDropDownRounded';
 import ArrowDropUpRoundedIcon from '@mui/icons-material/ArrowDropUpRounded';
+import { useUser } from '../../app/hooks/useUser';
 
 const Navbar = () => {
-  let userInfo = JSON.parse(localStorage.getItem("userInfo"));
+  // let userInfo = JSON.parse(localStorage.getItem("userInfo"));
+  const user = useUser();
+  let userInfo = user;
   let navigate = useNavigate();
   const [open, setOpen] = useState(false);
   const handleSubItemClick = () => {
