@@ -72,7 +72,7 @@ const Profile = ({ userInfo, dispatch, profileStatus }) => {
   const onSave = (data) => {
     delete data.confirmPassword;
     data = { ...data, id: userInfo.id }
-    dispatch(putProfileInfoApi(data));
+    // dispatch(putProfileInfoApi(data));
   };
 
   return (

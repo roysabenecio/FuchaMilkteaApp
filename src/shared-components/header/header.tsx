@@ -105,7 +105,7 @@ const Header = ({ menuList, userInfo }) => {
   }, [stockInfo]);
 
   useEffect(() => {
-    dispatch(getStockInfoApi());
+    // dispatch(getStockInfoApi());
     setBadgeContent(stockStatusCount);
   }, [fetchStatus]);
 

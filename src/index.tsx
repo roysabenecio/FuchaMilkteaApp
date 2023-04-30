@@ -1,3 +1,4 @@
+import "@fontsource/poppins";
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { Provider } from 'react-redux';
@@ -8,7 +9,6 @@ import CssBaseline from '@mui/material/CssBaseline';
 import { SnackbarProvider } from 'notistack';
 import theme from './theme';
 import routes from "./routes";
-import "@fontsource/poppins";
 
 ReactDOM.createRoot(document.getElementById("root") as HTMLElement).render(
   <React.StrictMode>
