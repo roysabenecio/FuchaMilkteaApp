@@ -28,6 +28,8 @@ import { getStockInfoApi } from '../../inventory/slice';
 import { useSelector } from 'react-redux';
 import { useSnackbar } from 'notistack';
 import { useForm } from "react-hook-form";
+import { useAppSelector } from '../../../app/hooks';
+import { usePostBillMutation } from '../apiSlice';
 
 const Bill = ({
   dispatch,
@@ -240,17 +242,24 @@ const Bill = ({
     }
   }, [billInfo]);
 
+  const {userInfo} = useAppSelector(state => state.login);
+
+  const [postBill] = usePostBillMutation();
+
   const printBill = () => {
-    const userData = JSON.parse(localStorage.getItem('userInfo'));
+    // const userData = JSON.parse(localStorage.getItem('userInfo'));
+    const userData = userInfo;
+    console.log(userData);
     let data = { orders: [...orders], userId: userData.id };
-    dispatch(postBillApi(data));
+    // dispatch(postBillApi(data));
+    postBill(data)
     handleBillDialog();
     enqueueSnackbar("Order placed successfully", {
       variant: 'success'
     });
-    dispatch(getOrdersInfoApi());
-    dispatch(getStockInfoApi());
-    dispatch(makePrint());
+    // dispatch(getOrdersInfoApi());
+    // dispatch(getStockInfoApi());
+    // dispatch(makePrint());
     setOrders([]);
   };
 

@@ -10,7 +10,7 @@ import {
   ToggleButtonGroup
 } from '@mui/material';
 
-const POS = ({ dispatch, sliceStates }) => {
+const POS = ({ dispatch, sliceStates, menuInfo, addOnInfo, sizeInfo }) => {
 
   const [orders, setOrders] = useState([]);
   const [totalPrice, setTotalPrice] = useState(0);
@@ -232,12 +232,15 @@ const POS = ({ dispatch, sliceStates }) => {
           </Grid>
           {/* Menu Item */}
           <Grid item container spacing={2} md={12} mt={1} maxHeight={550} overflow={'auto'}>
-            {sliceStates.menuInfo.map((menuItem, index) => (
+            {/* {sliceStates.menuInfo.map((menuItem, index) => ( */}
+            {menuInfo.map((menuItem, index) => (
               menuItem.menuCategoryId === category ?
                 <Grid item key={index} md={4}>
                   <MenuCard
                     sliceStates={sliceStates}
+                    addOnInfo={addOnInfo}
                     menuItem={menuItem}
+                    sizeInfo={sizeInfo}
                     addToBill={addToBill}
                     validations={validations}
                     getPrice={getPrice} />

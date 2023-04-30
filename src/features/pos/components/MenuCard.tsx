@@ -15,33 +15,38 @@ import {
   Button
 } from '@mui/material';
 
-const MenuCard = ({
-  menuItem,
-  addToBill,
-  sliceStates,
-  validations,
-  getPrice
-}) => {
+const MenuCard = (props
+//   {
+//   menuItem,
+//   addToBill,
+//   sliceStates,
+//   validations,
+//   getPrice,
+//   sizeInfo,
+//   addOnInfo
+// }
+) => {
   //add ons
-  const [addOn, setAddOn] = useState(sliceStates.addOnInfo[0].name);
+  const [addOn, setAddOn] = useState(props.addOnInfo[0].name);
   const handleAddOn = (event) => {
     setAddOn(event.target.value)
   };
 
   //sizes
-  const [size, setSize] = useState(sliceStates.sizeInfo[1].id);
+  console.log(props.sizeInfo)
+  const [size, setSize] = useState(props.sizeInfo[1].id);
   const handleSize = (event, newSize) => {
     setSize(event.target.value)
   };
 
-  const classicSize = sliceStates.sizeInfo.map(s => s);
-  const premiumSize = sliceStates.sizeInfo.filter(s => s.id !== 1);
+  const classicSize = props.sizeInfo.map(s => s);
+  const premiumSize = props.sizeInfo.filter(s => s.id !== 1);
 
   return (
     <>
       {/* // Every Menu Item is diffirent
         //so the key should be its ID */}
-      <Grow in={true} timeout={1500} key={menuItem.id}>
+      <Grow in={true} timeout={1500} key={props.menuItem.id}>
         <Card>
           <Grid container spacing={2} p={2}>
             <Grid item md={4} sx={styles.iconWrapper}>
@@ -51,12 +56,12 @@ const MenuCard = ({
             <Grid item md={8}>
               {/* Menu Name */}
               <Typography sx={styles.overviewText} variant='subtitle1'>
-                {menuItem.name}
+                {props.menuItem.name}
               </Typography>
 
               {/* Menu Category !TEMPORARY! */}
               {itemCategory.map((cat, index) => (
-                menuItem.menuCategoryId === cat.id ?
+                props.menuItem.menuCategoryId === cat.id ?
                   <Typography key={index} variant='subtitle2'>
                     {cat.label}
                   </Typography> : null
@@ -66,14 +71,14 @@ const MenuCard = ({
             {/* Price */}
             <Grid item md={12}>
               <Typography sx={styles.overviewText} variant='subtitle1'>
-                {`Php ${validations.isMilkTea(menuItem.menuCategoryId) ? 
-                   getPrice.milkTea(menuItem.menuCategoryId, size)
-                : getPrice.menu(menuItem.id, menuItem.menuCategoryId)}`}
+                {`Php ${props.validations.isMilkTea(props.menuItem.menuCategoryId) ? 
+                   props.getPrice.milkTea(props.menuItem.menuCategoryId, size)
+                : props.getPrice.menu(props.menuItem.id, props.menuItem.menuCategoryId)}`}
               </Typography>
             </Grid>
 
             {/* Size */}
-            {validations.isMilkTea(menuItem.menuCategoryId) ?
+            {props.validations.isMilkTea(props.menuItem.menuCategoryId) ?
               <Grid item md={12}>
                 <FormControl sx={{ width: 130 }}>
                   <InputLabel sx={{ fontSize: 13 }}>Size</InputLabel>
@@ -82,7 +87,7 @@ const MenuCard = ({
                     label="Size"
                     onChange={handleSize}
                     size='small'>
-                    {menuItem.menuCategoryId === 1 ? classicSize.map(size => (
+                    {props.menuItem.menuCategoryId === 1 ? classicSize.map(size => (
                       <MenuItem key={size.id} value={size.id}>{size.name}</MenuItem>
                     )) :
                       premiumSize.map(size => (
@@ -94,7 +99,7 @@ const MenuCard = ({
               </Grid> : null }
 
             {/* Add Ons */}
-            {validations.isMilkTea(menuItem.menuCategoryId) ?
+            {props.validations.isMilkTea(props.menuItem.menuCategoryId) ?
               <Grid item md={12}>
                 <FormControl sx={{ width: 130 }}>
                   <InputLabel sx={{ fontSize: 13 }}>Add On</InputLabel>
@@ -104,7 +109,7 @@ const MenuCard = ({
                     label="Add on"
                     onChange={handleAddOn}
                     size='small'>
-                    {sliceStates.addOnInfo.map(addOn => (
+                    {props.sliceStates.addOnInfo.map(addOn => (
                       <MenuItem key={addOn.id} value={addOn.name}>{addOn.name}</MenuItem>
                     ))}
                   </Select>
@@ -116,7 +121,7 @@ const MenuCard = ({
                 fullWidth
                 variant="menuCard"
                 // sx={{ backgroundColor: "#FFFFFF"}}
-                onClick={() => addToBill(menuItem, menuItem.menuCategoryId, addOn, size, 0)}>
+                onClick={() => props.addToBill(props.menuItem, props.menuItem.menuCategoryId, props.addOn, props.size, 0)}>
                 Add to bill
               </Button>
             </Grid>
