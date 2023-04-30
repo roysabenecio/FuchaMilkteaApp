@@ -19,30 +19,9 @@ export const centralApiSlice = createApi({
     //   return headers;
     // },
   }),
-  tagTypes: ['MonthlySales','DailySales'],
+  tagTypes: ['MonthlySales', 'DailySales', 'Users', 'Login Activity', 'User Activity'],
   endpoints: (build) => ({
-    login: build.mutation({
-      query: (userCredentials) => ({
-        url: "/api/Auth/Login",
-        method: "POST",
-        body: userCredentials,
-        // mode: 'cors'
-      }),
-    }),
-    addLoginActivity: build.mutation({
-      query: userId => ({
-        url: "/api/Auth/LoginActivity",
-        method: "POST",
-        body: userId,
-      })
-    }),
-    register: build.mutation({
-      query: userInfo => ({
-        url: "/api/Users/Register",
-        method: "POST",
-        body: userInfo,
-      }),
-    }),
+    
     validateUsername: build.mutation({
       query: username => ({
         url: "/api/Users/ValidateUsername",
@@ -53,16 +32,13 @@ export const centralApiSlice = createApi({
     salesTransacInfo: build.query({
       query: () => "/api/Sales/AllSaleTransactions"
     }),
-  //   getAllSizes: build.query({
-  //     query: () =>({ url: "/api/Inventory/AllSizes"})
-  // }),
+    //   getAllSizes: build.query({
+    //     query: () =>({ url: "/api/Inventory/AllSizes"})
+    // }),
   }),
 });
 
-export const { 
-  useLoginMutation, 
-  useAddLoginActivityMutation,
-  useRegisterMutation,
+export const {
   useValidateUsernameMutation,
   useSalesTransacInfoQuery,
   // useGetAllSizesQuery
