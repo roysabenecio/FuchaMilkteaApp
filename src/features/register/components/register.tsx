@@ -5,10 +5,11 @@ import { Link, useNavigate } from "react-router-dom";
 import { useForm, Controller } from "react-hook-form";
 import { TextField, Box, Button, Typography, Grid, MenuItem } from '@mui/material';
 import { useSnackbar } from 'notistack';
-import { useRegisterMutation, useValidateUsernameMutation } from '../../api/apiSlice';
-import type{ RegisterForm, RegisterUser } from '../../../app/types/types';
+import type { RegisterForm, RegisterUser } from '../../../app/types/types';
 import loginCss from './styles';
 import { default as color } from '../../../util/color-palette';
+import { useRegisterMutation } from '../../users/apiSlice';
+import { useValidateUsernameMutation } from '../../../app/centralApiSlice';
 
 const Register = () => {
   const navigate = useNavigate();
@@ -84,9 +85,8 @@ const Register = () => {
           </Box>
           <Box css={loginCss.formFields}>
             <Box width={'70%'} mb={'.5rem'}>
-              <Typography
-                css={loginCss.loginTitle}
-                variant="h3">Create your account
+              <Typography css={loginCss.loginTitle} variant="h3">
+                Create your account
               </Typography>
               <Typography mr={0.5}>
                 Already have an account?
