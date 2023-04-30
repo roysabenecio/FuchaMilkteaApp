@@ -19,12 +19,12 @@ import { getSupplierInfoApi, getPurchaseInfoApi, getPOInfoApi } from '../supplie
 import { getActivityHistoryApi, getLoginHistoryApi } from '../history/slice';
 import { getAllGramSoldApi } from '../dashboard/slice';
 import { useUser } from '../../app/hooks/useUser';
-import { useLoginMutation } from '../api/apiSlice';
 import { useToken } from '../../app/hooks/useToken';
 import { useAppSelector } from '../../app/hooks';
 import jwtDecode from 'jwt-decode';
 import { User } from '../../app/types/types';
 import { stringify } from 'querystring';
+import { useLoginMutation } from '../login/apiSlice';
 
 const MainContainer = () => {
     const { enqueueSnackbar } = useSnackbar();
