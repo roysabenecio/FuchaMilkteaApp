@@ -14,7 +14,7 @@ import BasicTable from '../../../shared-components/table/table';
 import ExpandMoreRoundedIcon from '@mui/icons-material/ExpandMoreRounded';
 import DateRangeRoundedIcon from '@mui/icons-material/DateRangeRounded';
 
-const History = ({ tableInfo }) => {
+const History = ({ tableInfo, loginHistoryInfo, activityHistoryInfo }) => {
   //MENU DROPDOWN FOR DATE 
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
@@ -34,8 +34,8 @@ const History = ({ tableInfo }) => {
   const from = moment(dateRange[0].startDate);
   const to = moment(dateRange[0].endDate);
 
-  const selectActivityHist = (state, from, to) => {
-    return state.history.activityHistoryInfo.filter(history => {
+  const selectActivityHist = (data, from, to) => {
+    return data.filter(history => {
       let date = moment(history.date);
       if (moment(date._d).isBetween(from._d, to._d, 'days', '[]')) {
         return history;
@@ -52,8 +52,8 @@ const History = ({ tableInfo }) => {
     });
   };
 
-  const selectLoginHistoryInfo = (state, from, to) => {
-    return state.history.loginHistoryInfo.filter(log => {
+  const selectLoginHistoryInfo = (data, from, to) => {
+    return data.filter(log => {
       let date = moment(log.date);
       if (moment(date._d).isBetween(from._d, to._d, 'days', '[]')) {
         return log;
@@ -62,8 +62,10 @@ const History = ({ tableInfo }) => {
   };
 
   const filteredTransacHist = useSelector(state => selectTransacHist(state, from, to));
-  const filteredActivityHist = useSelector(state => selectActivityHist(state, from, to));
-  const filteredLoginHist = useSelector(state => selectLoginHistoryInfo(state, from, to));
+  // const filteredActivityHist = useSelector(state => selectActivityHist(state, from, to));
+  const filteredActivityHist = selectActivityHist(activityHistoryInfo, from, to);
+  // const filteredLoginHist = useSelector(state => selectLoginHistoryInfo(state, from, to));
+  const filteredLoginHist = selectLoginHistoryInfo(loginHistoryInfo, from, to);
 
 
   const clearDateFilter = () => {
