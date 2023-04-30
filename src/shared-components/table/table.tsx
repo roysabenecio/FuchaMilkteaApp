@@ -8,8 +8,8 @@ import TableHead from '@mui/material/TableHead';
 import TableRow from '@mui/material/TableRow';
 
 const BasicTable = ({
-    columns = [],
-    rows = [],
+    columns = [] as unknown,
+    rows = [] as unknown,
     tableToModule,
     maxHeight,
     maxWidth }) => {
