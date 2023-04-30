@@ -4,6 +4,7 @@ import color from './util/color-palette';
 declare module '@mui/material/Button' {
   interface ButtonPropsVariantOverrides {
     loginBtn: true;
+    delete: true;
   }
 }
 
@@ -49,7 +50,8 @@ export default createTheme(theme, {
       defaultProps: {
         size: 'small',
         margin: 'dense',
-        required: true
+        required: true,
+        fullWidth: true
       }
     },
     MuiAppBar: {
