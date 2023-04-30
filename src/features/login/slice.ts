@@ -2,6 +2,7 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 import { BASE_URL } from "../api";
 
+import { UserDTO } from "../../app/types/types";
 // First, create the thunk
 // const getUserInfoByNameAndPassword = createAsyncThunk(
 //   'users/fetchByIdStatus',
@@ -34,16 +35,24 @@ export const logoutActivityApi = createAsyncThunk('logout-activity', async (data
 export const loginSlice = createSlice({
   name: 'login',
   initialState: {
-    userInfo: null,
+    token: '',
+    userInfo: {} as UserDTO,
     loginInfo: null,
     loginErrors: null,
     fetchStatus: ''
   },
   reducers: {
-    getUserInfo: (state, action) => {
+    getUserInfo: (state,action) => {
       state.userInfo = action.payload
-      localStorage.setItem('userInfo', JSON.stringify(state.userInfo.userInfo));
+      // localStorage.setItem('userInfo', JSON.stringify(state.userInfo.userInfo));
+      // state.userInfo = JSON.parse(localStorage.getItem("userInfo") || "");
 
+    },
+    setSliceUser: (state, action) => {
+      state.userInfo = action.payload;
+    },
+    setSliceToken: (state, action) => {
+      state.token = action.payload;
     },
     reloginUserInfo: (state) => {
       state.userInfo = JSON.parse(localStorage.getItem("userInfo"));
@@ -113,5 +122,4 @@ export const loginSlice = createSlice({
 });
 
 export const loginReducer = loginSlice.reducer;
-
-export const { getUserInfo, clearUserInfo, clearLoginErrors, reloginUserInfo, setLoginErrors } = loginSlice.actions;
+export const { getUserInfo, clearUserInfo, clearLoginErrors, reloginUserInfo, setLoginErrors, setSliceUser, setSliceToken } = loginSlice.actions;
